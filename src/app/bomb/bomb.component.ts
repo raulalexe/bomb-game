@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { Colors } from '../colors.enum';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector: 'app-bomb',
@@ -7,47 +8,53 @@ import { Colors } from '../colors.enum';
   styleUrls: ['./bomb.component.scss']
 })
 export class BombComponent implements OnInit {
-  @Input() cx: number;
-  @Input() cy: number;
-  @Input() color: Colors;
+  radius = 40;
+  timerRadius = 15;
+  svgSize = this.radius * 2 + this.radius / 2;
+  isVisible = true;
+  @Input() color: string;
   @Input() time: number;
-  @Output() notifyBombDrag: EventEmitter<Colors> = new EventEmitter<Colors>();
-  @Output() explodeBomb: EventEmitter<number> = new EventEmitter<number>();
-   radius = 40;
-   timerRadius = 15;
-   timerCx: number;
-   timerCy: number;
-   timerTextCx: string;
-   timerTextCy: string;
-   isVisible = true;
+  @Input() left: string;
+  @Input() top: string;
+  notifyBombDrag: Subject<BombComponent> = new Subject();
+  explodeBomb: Subject<any> = new Subject();
+  timerCx: number;
+  timerCy: number;
+  timerTextCx: string;
+  timerTextCy: string;
+  bombInterval: any;
 
   constructor() {
   }
 
   ngOnInit() {
-    this.timerCx = this.cx + this.cx / 2;
-    this.timerCy = this.cy / 2;
+    this.timerCx = this.radius + this.radius / 1.5;
+    this.timerCy = this.radius / 2;
     this.timerTextCx = this.timerCx + '%';
     this.timerTextCy = this.timerCy + '%';
     this.startBombTimer();
-    console.log(this.cx, this.cy, this.timerCx, this.timerCy,this.timerTextCx, this.timerTextCy);
   }
 
-  onDragBomb(e: DragEvent){
-    this.notifyBombDrag.emit(this.color);
+  onDragBomb(e: DragEvent): void {
+    this.notifyBombDrag.next(this);
   }
 
-  onTimerEnd(){
+  onTimerEnd(): void {
     this.isVisible = false;
-    this.explodeBomb.emit();
+    this.stopBombTimer();
+    this.explodeBomb.next();
   }
 
-  startBombTimer(){
-    setInterval(() => {
+  startBombTimer(): void {
+    this.bombInterval = setInterval(() => {
       this.time = this.time - 1;
       if(this.time === 0){
         this.onTimerEnd();
       }
     }, 1000);
+  }
+
+  stopBombTimer(): void{
+    clearInterval(this.bombInterval);
   }
 }

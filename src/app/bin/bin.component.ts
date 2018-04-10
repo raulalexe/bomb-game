@@ -9,7 +9,7 @@ import { Colors } from '../colors.enum';
 export class BinComponent implements OnInit {
   @Input() fillColor: Colors;
   @Output() notifyDropOnBin: EventEmitter<Colors> = new EventEmitter<Colors>();
-   isHovered: boolean;
+   isHovered = false;
    binWidth = 100;
 
   constructor() { }
@@ -19,6 +19,7 @@ export class BinComponent implements OnInit {
 
   @HostListener('window:mouseup', ['$event'])
   releaseDraggedElement(e: Event) {
+    console.log(e);
     this.isHovered = false;
   }
 
@@ -28,6 +29,7 @@ export class BinComponent implements OnInit {
   }
 
   handleDrop(e) {
+    this.isHovered = false;
     this.notifyDropOnBin.emit(this.fillColor);
   }
 }

@@ -21,6 +21,7 @@ import { BinComponent } from './bin/bin.component';
     HttpModule,
   ],
   providers: [],
+  entryComponents: [BombComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

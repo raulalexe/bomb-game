@@ -1,5 +1,21 @@
 .can-hover{
   transform: scale(1.2);
-  transition: all 0.5s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  &.red{
+    rect{
+      fill:rgba(200, 0, 0, 0.7);
+    }
+
+  }
+  &.green{
+    rect{
+      fill:rgba(0, 200, 0, 0.7);
+    }
+  }
+  &.blue{
+    rect{
+      fill:rgba(0, 0, 200, 0.7);
+    }
+  }
 }
 
