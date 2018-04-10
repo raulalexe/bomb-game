@@ -1,0 +1,7 @@
+<div class="bomb" draggable="true" (dragstart)="onDragBomb($event)" *ngIf="isVisible">
+  <svg height="100" width="100">
+    <circle [attr.cx]="cx" [attr.cy]="cy" [attr.r]="radius" [attr.fill]="color" />
+    <circle [attr.cx]="timerCx" [attr.cy]="timerCy" [attr.r]="timerRadius" fill="orange" />
+    <text [attr.x]="timerTextCx" [attr.y]="timerTextCy" text-anchor="middle" dy=".3em">{{time}}</text>
+  </svg>
+</div>

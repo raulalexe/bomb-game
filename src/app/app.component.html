@@ -1,3 +1,19 @@
-<h1>
-  {{title}}
-</h1>
+<h2>Score: {{score}} </h2>
+
+<div class='game-container'>
+  <div class='bombs-container'>
+    <app-bomb [cx]="40" [cy]="40" [color]="colors[0]" [time]="'80'" (notifyBombDrag)="handleDragStart($event)" (explodeBomb)="handleBombExplode($event)"></app-bomb>
+    <app-bomb [cx]="60" [cy]="70" [color]="colors[2]" [time]="'80'" (notifyBombDrag)="handleDragStart($event)" (explodeBomb)="handleBombExplode($event)"></app-bomb>
+  </div>
+
+  <div class='bins-container'>
+      <app-bin [fillColor]="colors[0]" class="bin" (notifyDropOnBin)="handleDrop($event)"></app-bin>
+      <app-bin [fillColor]="colors[1]" class="bin" (notifyDropOnBin)="handleDrop($event)"></app-bin>
+      <app-bin [fillColor]="colors[2]" class="bin" (notifyDropOnBin)="handleDrop($event)"></app-bin>
+  </div>
+</div>
+
+<app-timer [bombsCount]="bombsCount" (timerReset)="onTimerReset($event)"></app-timer>
+
+
+

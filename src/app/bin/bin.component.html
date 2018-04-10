@@ -1,0 +1,5 @@
+<div class="bin" (dragover)="allowDrop($event)" (drop)="handleDrop($event)" [ngClass]="{'can-hover':isHovered}">
+  <svg height="100" width="100">
+    <rect x="0" y="0" [attr.width]="binWidth" [attr.height]="binWidth" [attr.fill]="fillColor"/>
+  </svg>
+</div>
