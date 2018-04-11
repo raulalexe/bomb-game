@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { TimerComponent } from './timer/timer.component';
 import { BombComponent } from './bomb/bomb.component';
 import { BinComponent } from './bin/bin.component';
+import { DragInfoService } from './drag-info.service';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,7 @@ import { BinComponent } from './bin/bin.component';
     FormsModule,
     HttpModule,
   ],
-  providers: [],
+  providers: [DragInfoService],
   entryComponents: [BombComponent],
   bootstrap: [AppComponent]
 })

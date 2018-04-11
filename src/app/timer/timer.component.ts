@@ -8,13 +8,15 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 export class TimerComponent implements OnInit {
   @Output() timerReset: EventEmitter<any> = new EventEmitter<any>();
   @Input() bombsCount: number;
-  private changeTimeDefault = 15;
+  @Input() time: number;
   private countdown: any;
-  changeTimeLeft = this.changeTimeDefault;
+  changeTimeLeft: number;
 
   constructor() { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.changeTimeLeft = this.time;
+  }
 
   ngAfterViewInit() {
     this.startTimer();
@@ -29,7 +31,7 @@ export class TimerComponent implements OnInit {
       }
       if (this.changeTimeLeft === 0){
         this.timerReset.emit();
-        this.changeTimeLeft = this.changeTimeDefault;
+        this.changeTimeLeft = this.time;
       }
     }, 1000);
   }

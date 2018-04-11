@@ -17,7 +17,7 @@ export class BombComponent implements OnInit {
   @Input() left: string;
   @Input() top: string;
   notifyBombDrag: Subject<BombComponent> = new Subject();
-  explodeBomb: Subject<any> = new Subject();
+  explodeBomb: Subject<BombComponent> = new Subject();
   timerCx: number;
   timerCy: number;
   timerTextCx: string;
@@ -42,7 +42,7 @@ export class BombComponent implements OnInit {
   onTimerEnd(): void {
     this.isVisible = false;
     this.stopBombTimer();
-    this.explodeBomb.next();
+    this.explodeBomb.next(this);
   }
 
   startBombTimer(): void {
@@ -54,7 +54,7 @@ export class BombComponent implements OnInit {
     }, 1000);
   }
 
-  stopBombTimer(): void{
+  stopBombTimer(): void {
     clearInterval(this.bombInterval);
   }
 }
