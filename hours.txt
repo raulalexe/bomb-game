@@ -1,0 +1,8 @@
+Spent time approximatively 20 hours
+
+- setting up the project with the correct components
+- implementing components functionality
+- implementing component communication
+- create start/restart button and end message
+- make bins react only on hovering the corect color bomb over them and fix the issue of having bins remain in the 'hovered' state when the mouse is no longer above them
+- added logic around the increase of speed and overlapping bombs

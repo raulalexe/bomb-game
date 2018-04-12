@@ -28,6 +28,7 @@ export class AppComponent {
   bombsCount = 0;
   bombsOnScreen = 0;
   maxBombs = 120;
+  private bombContainerSize = 80;
   private bombInterval: any;
   private componentRef: ComponentRef<BombComponent>;
   private draggedBomb: BombComponent;
@@ -87,7 +88,7 @@ export class AppComponent {
   }
 
   private increaseBombFrequencyByPerc(): void {
-    // At first increase by one second so that it won't be too slow
+    // Start increase by 20% so that it won't be too slow then by 10%
     this.bombCreateInterval -= this.bombCreateInterval >= 2000 ? this.bombCreateIntervalDefault * .2 : this.bombCreateIntervalDefault * 0.1;
     clearInterval(this.bombInterval);
     this.createBombInterval();
@@ -98,8 +99,8 @@ export class AppComponent {
       if (this.bombsCount === this.maxBombs) {
         this.endGame();
       }
-      // Every time we put 10 percent of the bombs we want to decrease the time by 10% of the default (start) time
-      else if (this.bombCreateInterval > 500 && this.bombsCount % (this.maxBombs * .05) === 0 && this.bombsCount > 1) {
+      // Every time we put 5%
+      else if (this.shouldIncreaseSpeed()) {
         this.increaseBombFrequencyByPerc();
         this.createBomb();
       }
@@ -109,12 +110,27 @@ export class AppComponent {
     }, this.bombCreateInterval);
   }
 
+  private shouldIncreaseSpeed(): boolean {
+    if (this.bombCreateInterval <= 500 || this.bombsCount <= 1) {
+       return false;
+    }
+    // Increase after 2.5% of the bombs have been placed util we are below half the initial speed
+    if (this.bombCreateInterval * 2 > this.bombCreateIntervalDefault && this.bombsCount % (this.maxBombs * .025) === 0) {
+      return true;
+    }
+    if (this.bombCreateInterval > 1000 && this.bombsCount % (this.maxBombs * .1) === 0 ) {
+      return true;
+    }
+    return this.bombCreateInterval <= 1000 && this.bombsCount % (this.maxBombs * .4) === 0;
+  }
+
   private resetGameData(): void {
     this.gameStarted = true;
     this.gameOver = false; // set to false in case of game restart
     this.bombsCount = 0;
     this.bombsOnScreen = 0;
     this.score = 0;
+    this.bombCreateInterval = this.bombCreateIntervalDefault;
     this.occupiedCoords = [];
   }
 
@@ -129,29 +145,34 @@ export class AppComponent {
     }
   }
 
-  private getBombCoordinates(min: number, max: number, key: string): number {
-    const randCoord = this.getRandomInRange(min, max);
-    // Make sure that coord is outside the area of the container of another bomb and that there is a bit of space between
-    if (!this.occupiedCoords.some(c => (c.x - 100 < randCoord && randCoord < c.x) || (c.x + 100 > randCoord && c.x < randCoord))) {
-      return randCoord;
+  private getBombCoordinates(minX: number, maxX: number, minY: number, maxY: number): Coords {
+    const randX = this.getRandomInRange(minX, maxX);
+    const randY = this.getRandomInRange(minY, maxY);
+    // Make sure that coords is outside the area of the container of another bomb
+    if (!this.occupiedCoords.some(c =>
+      ((c.x - this.bombContainerSize < randX && randX < c.x) || (c.x + this.bombContainerSize > randX && c.x < randX)) ||
+      ((c.y - this.bombContainerSize < randY && randY < c.y) || (c.y + this.bombContainerSize > randY && c.y < randY))
+    )) {
+      return new Coords(randX, randY);
     }
-    return this.getBombCoordinates(min, max, key);
+    // Recursive call to get different coordinates
+    return this.getBombCoordinates(minX, maxX, minY, maxY);
   }
 
   private createBomb(): void {
     // Get the size of the container element for bombs to calculate radom positions based on the width height and starting X and Y
     const { x, y, width, height} = this.containerElem.nativeElement.getBoundingClientRect();
-    const left = this.getBombCoordinates(x, width, 'x');
-    const top = this.getBombCoordinates(y, height, 'y');
+    // Make sure that bombs don't overflow the width and heigh of the container by calculating width, height - the bomb size
+    const coords = this.getBombCoordinates(x, width - this.bombContainerSize, y, height - this.bombContainerSize);
     const factory: ComponentFactory<BombComponent> = this.resolver.resolveComponentFactory(BombComponent);
     this.componentRef = this.container.createComponent(factory);
     this.componentRef.instance.color = this.colors[this.getRandomInRange(0, this.colors.length - 1)];
     this.componentRef.instance.time = this.getRandomInRange(this.bombMinTime, this.bombMaxTime);
-    this.componentRef.instance.left = left + 'px';
-    this.componentRef.instance.top = top + 'px';
+    this.componentRef.instance.left = coords.x + 'px';
+    this.componentRef.instance.top = coords.y + 'px';
     this.bombDragSubscription = this.componentRef.instance.notifyBombDrag.subscribe(e => this.handleDragStart(e));
     this.bombExplodeSubscription = this.componentRef.instance.explodeBomb.subscribe(e => this.handleBombExplode(e));
-    this.occupiedCoords.push(new Coords(left, top));
+    this.occupiedCoords.push(new Coords(coords.x, coords.y));
     this.bombsCount++;
     this.bombsOnScreen++;
   }
