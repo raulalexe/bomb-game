@@ -11,3 +11,7 @@ Once here click the `Start Game` button.
 ## Known Issues
 
 - at times a `call stack exceeded error` can occur due to recursive calculation of the positioning of bombs when there are lots of bombs on the screen
+
+## Try it on GitHub Pages
+
+Click [this link](https://raulalexe.github.io/bomb-game/) to go to the GitHub page of this project.
